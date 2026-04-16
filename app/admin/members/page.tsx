@@ -6,6 +6,7 @@ interface Member {
   id: string
   name: string
   phone: string | null
+  address: string | null
   role: string
   created_at: string
   attendance_count?: number
@@ -22,7 +23,7 @@ export default function MembersPage() {
     const supabase = createClient()
     const { data: profiles } = await supabase
       .from('profiles')
-      .select('id, name, phone, role, created_at')
+      .select('id, name, phone, address, role, created_at')
       .order('name')
 
     if (!profiles) { setLoading(false); return }
@@ -80,6 +81,7 @@ export default function MembersPage() {
                 <tr>
                   <th>Name</th>
                   <th>Phone</th>
+                  <th>Address</th>
                   <th>Role</th>
                   <th>Services</th>
                   <th>Joined</th>
@@ -101,6 +103,7 @@ export default function MembersPage() {
                       </div>
                     </td>
                     <td>{m.phone ?? '—'}</td>
+                    <td style={{ maxWidth: 200, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={m.address ?? ''}>{m.address ?? '—'}</td>
                     <td><span className={`badge ${m.role === 'admin' ? 'badge-admin' : 'badge-member'}`}>{m.role}</span></td>
                     <td>{m.attendance_count}</td>
                     <td>{new Date(m.created_at).toLocaleDateString()}</td>
