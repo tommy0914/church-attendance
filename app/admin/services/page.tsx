@@ -17,7 +17,7 @@ export default function ServicesPage() {
   const [services, setServices] = useState<Service[]>([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
-  const [form, setForm] = useState({ name: '', description: '', start_time: '', end_time: '' })
+  const [form, setForm] = useState({ name: '', description: '', start_time: '', end_time: '', latitude: null as number | null, longitude: null as number | null })
   const [creating, setCreating] = useState(false)
   const [msg, setMsg] = useState('')
 
@@ -43,16 +43,36 @@ export default function ServicesPage() {
       description: form.description || null,
       start_time: form.start_time,
       end_time: form.end_time,
+      latitude: form.latitude,
+      longitude: form.longitude,
     })
 
     if (error) {
       setMsg('Error: ' + error.message)
     } else {
-      setForm({ name: '', description: '', start_time: '', end_time: '' })
+      setForm({ name: '', description: '', start_time: '', end_time: '', latitude: null, longitude: null })
       setShowForm(false)
       await loadServices()
     }
     setCreating(false)
+  }
+
+  function getLocation() {
+    if (!navigator.geolocation) {
+      setMsg('Error: Geolocation is not supported by your browser.')
+      return
+    }
+    setMsg('Fetching location...')
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setForm(p => ({ ...p, latitude: pos.coords.latitude, longitude: pos.coords.longitude }))
+        setMsg('')
+      },
+      (err) => {
+        setMsg('Error getting location: ' + err.message)
+      },
+      { enableHighAccuracy: true }
+    )
   }
 
   async function deleteService(id: string) {
@@ -123,6 +143,24 @@ export default function ServicesPage() {
                 <label className="form-label">End Time *</label>
                 <input type="datetime-local" className="form-input"
                   value={form.end_time} onChange={e => setForm(p => ({ ...p, end_time: e.target.value }))} required />
+              </div>
+              <div className="form-group" style={{ gridColumn: '1 / -1' }}>
+                <label className="form-label">Geofencing (Optional)</label>
+                <div style={{ display: 'flex', gap: 10, alignItems: 'center', background: 'var(--bg-secondary)', padding: 12, borderRadius: 8 }}>
+                  <button type="button" onClick={getLocation} className="btn btn-secondary btn-sm">
+                    📍 Set to My Current Location
+                  </button>
+                  <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                    {form.latitude && form.longitude 
+                      ? <>Pinned: {form.latitude.toFixed(6)}, {form.longitude.toFixed(6)}</>
+                      : 'Not set (Anyone can scan from anywhere)'}
+                  </span>
+                  {form.latitude && (
+                    <button type="button" onClick={() => setForm(p => ({ ...p, latitude: null, longitude: null }))} style={{ background: 'none', border: 'none', color: 'var(--error)', cursor: 'pointer', fontSize: '0.85rem' }}>
+                      Clear
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
             <div style={{ display: 'flex', gap: 12 }}>

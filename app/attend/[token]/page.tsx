@@ -3,7 +3,22 @@ import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
-type Status = 'loading' | 'success' | 'duplicate' | 'invalid' | 'offline' | 'error'
+type Status = 'loading' | 'success' | 'duplicate' | 'invalid' | 'offline' | 'error' | 'too_far' | 'locating' | 'location_error'
+
+// Haversine formula to calculate distance in meters
+function getDistanceInMeters(lat1: number, lon1: number, lat2: number, lon2: number) {
+  const R = 6371e3; // Earth's radius in meters
+  const p1 = lat1 * Math.PI/180;
+  const p2 = lat2 * Math.PI/180;
+  const dp = (lat2-lat1) * Math.PI/180;
+  const dl = (lon2-lon1) * Math.PI/180;
+
+  const a = Math.sin(dp/2) * Math.sin(dp/2) +
+            Math.cos(p1) * Math.cos(p2) *
+            Math.sin(dl/2) * Math.sin(dl/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return R * c;
+}
 
 export default function AttendPage() {
   const { token } = useParams<{ token: string }>()
@@ -26,7 +41,7 @@ export default function AttendPage() {
     // Find service by qr_token
     const { data: service, error: svcErr } = await supabase
       .from('services')
-      .select('id, name, start_time, end_time')
+      .select('id, name, start_time, end_time, latitude, longitude')
       .eq('qr_token', token)
       .single()
 
@@ -37,6 +52,37 @@ export default function AttendPage() {
     }
 
     setServiceName(service.name)
+
+    // Check Geofence
+    if (service.latitude !== null && service.longitude !== null) {
+      setStatus('locating')
+      setMessage('Verifying your location to ensure you are at the church premises...')
+
+      try {
+        const pos = await new Promise<GeolocationPosition>((resolve, reject) => {
+          if (!navigator.geolocation) reject(new Error('unsupported'))
+          navigator.geolocation.getCurrentPosition(resolve, reject, { enableHighAccuracy: true })
+        })
+
+        const dist = getDistanceInMeters(
+          pos.coords.latitude, pos.coords.longitude,
+          service.latitude, service.longitude
+        )
+
+        // 300 meters buffer
+        if (dist > 300) {
+          setStatus('too_far')
+          setMessage(`You are approximately ${Math.round(dist)} meters away from the building. You must be on the church premises to check in.`)
+          return
+        }
+      } catch (err: any) {
+        setStatus('location_error')
+        setMessage('We could not access your location. Please allow location permissions in your browser settings to check in.')
+        return
+      }
+    }
+
+    setStatus('loading')
 
     // Attempt to record attendance
     const { error: attErr } = await supabase
@@ -70,11 +116,14 @@ export default function AttendPage() {
   }
 
   const states: Record<Status, { icon: string; title: string; color: string }> = {
+    locating: { icon: '📍', title: 'Verifying Location…', color: 'var(--accent-light)' },
     loading: { icon: '⏳', title: 'Recording attendance…', color: 'var(--text-secondary)' },
     success: { icon: '✅', title: 'Attendance Recorded!', color: 'var(--success)' },
     duplicate: { icon: '🔁', title: 'Already Recorded', color: 'var(--warning)' },
     invalid: { icon: '❌', title: 'Invalid QR Code', color: 'var(--error)' },
     offline: { icon: '📶', title: 'Saved Offline', color: 'var(--gold)' },
+    too_far: { icon: '🗺️', title: 'Too Far Away', color: 'var(--error)' },
+    location_error: { icon: '🔒', title: 'Location Blocked', color: 'var(--warning)' },
     error: { icon: '⚠️', title: 'Something went wrong', color: 'var(--error)' },
   }
 
@@ -85,21 +134,24 @@ export default function AttendPage() {
       <div className="card fade-in text-center" style={{ maxWidth: 440, width: '100%' }}>
         {/* Icon */}
         <div style={{ fontSize: '5rem', marginBottom: 20 }}>
-          {status === 'loading' ? <span className="spinner" style={{ width: 48, height: 48, display: 'inline-block', borderWidth: 3 }} /> : s.icon}
+          {(status === 'loading' || status === 'locating') ? <span className="spinner" style={{ width: 48, height: 48, display: 'inline-block', borderWidth: 3, borderColor: `${s.color} transparent transparent transparent` }} /> : s.icon}
         </div>
 
         <h2 style={{ fontSize: '1.4rem', marginBottom: 8, color: s.color }}>{s.title}</h2>
         {serviceName && <p style={{ fontWeight: 600, color: 'var(--text-primary)', marginBottom: 8 }}>{serviceName}</p>}
         <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', lineHeight: 1.7 }}>{message}</p>
 
-        {/* Actions (after loading) */}
-        {status !== 'loading' && (
+        {/* Actions (after logic) */}
+        {(status !== 'loading' && status !== 'locating') && (
           <div style={{ marginTop: 28, display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
             <button onClick={() => router.push('/dashboard/profile')} className="btn btn-primary">
               View My Attendance
             </button>
-            <button onClick={() => router.push('/dashboard/scan')} className="btn btn-secondary">
-              Scan Another
+            <button onClick={() => {
+              if (status === 'too_far' || status === 'location_error') window.location.reload()
+              else router.push('/dashboard/scan')
+            }} className="btn btn-secondary">
+              {status === 'too_far' || status === 'location_error' ? 'Retry Check-in' : 'Scan Another'}
             </button>
           </div>
         )}
