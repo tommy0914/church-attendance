@@ -20,8 +20,25 @@ export default function MembersPage() {
   const [selectedMember, setSelectedMember] = useState<Member | null>(null)
   const [attendanceHistory, setAttendanceHistory] = useState<{name: string, date: string}[]>([])
   const [loadingHistory, setLoadingHistory] = useState(false)
+  const [availableServices, setAvailableServices] = useState<{id: string, name: string}[]>([])
+  const [selectedServiceId, setSelectedServiceId] = useState('')
+  const [marking, setMarking] = useState(false)
 
-  useEffect(() => { loadMembers() }, [])
+  useEffect(() => { 
+    loadMembers() 
+    loadAvailableServices()
+  }, [])
+
+  async function loadAvailableServices() {
+    const supabase = createClient()
+    const { data } = await supabase
+      .from('services')
+      .select('id, name')
+      .order('start_time', { ascending: false })
+      .limit(10)
+    setAvailableServices(data || [])
+    if (data && data.length > 0) setSelectedServiceId(data[0].id)
+  }
 
   async function loadMembers() {
     const supabase = createClient()
@@ -79,6 +96,34 @@ export default function MembersPage() {
     if (selectedMember?.id === member.id) {
       setSelectedMember(prev => prev ? { ...prev, role: newRole } : null)
     }
+  }
+
+  async function markManualAttendance() {
+    if (!selectedMember || !selectedServiceId) return
+    setMarking(true)
+    const supabase = createClient()
+    
+    const { error } = await supabase
+      .from('attendance')
+      .insert({ user_id: selectedMember.id, service_id: selectedServiceId })
+
+    if (error) {
+      if (error.code === '23505') alert('This member is already marked present for this service.')
+      else alert('Error: ' + error.message)
+    } else {
+      // Success - update local state
+      setMembers(prev => prev.map(m => 
+        m.id === selectedMember.id 
+          ? { ...m, attendance_count: (m.attendance_count || 0) + 1 } 
+          : m
+      ))
+      if (selectedMember.id) {
+        setSelectedMember(prev => prev ? { ...prev, attendance_count: (prev.attendance_count || 0) + 1 } : null)
+        await loadAttendanceHistory(selectedMember.id)
+      }
+      alert('Attendance marked successfully!')
+    }
+    setMarking(false)
   }
 
   const filtered = members.filter(m =>
@@ -259,6 +304,34 @@ export default function MembersPage() {
                   ))}
                 </div>
               )}
+            </div>
+
+            <div style={{ padding: 16, background: 'var(--bg-secondary)', borderRadius: 12, marginBottom: 24, border: '1px solid var(--border)' }}>
+              <h3 style={{ fontSize: '0.9rem', marginBottom: 12 }}>Mark Present Manually</h3>
+              <div style={{ display: 'flex', gap: 8, flexDirection: 'column' }}>
+                <select 
+                  className="form-input" 
+                  style={{ fontSize: '0.85rem' }}
+                  value={selectedServiceId}
+                  onChange={e => setSelectedServiceId(e.target.value)}
+                >
+                  {availableServices.length === 0 ? (
+                    <option value="">No services available</option>
+                  ) : (
+                    availableServices.map(s => (
+                      <option key={s.id} value={s.id}>{s.name}</option>
+                    ))
+                  )}
+                </select>
+                <button 
+                  onClick={markManualAttendance} 
+                  className="btn btn-secondary" 
+                  disabled={marking || !selectedServiceId}
+                  style={{ width: '100%' }}
+                >
+                  {marking ? <span className="spinner" /> : '🤝 Mark as Present'}
+                </button>
+              </div>
             </div>
 
             <div style={{ display: 'flex', gap: 12 }}>
