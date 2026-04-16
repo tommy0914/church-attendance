@@ -90,7 +90,12 @@ function LoginForm() {
             </div>
 
             <div className="form-group">
-              <label className="form-label">Password</label>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                <label className="form-label" style={{ marginBottom: 0 }}>Password</label>
+                <Link href="/forgot-password" style={{ fontSize: '0.8rem', color: 'var(--accent-light)', textDecoration: 'none' }}>
+                  Forgot password?
+                </Link>
+              </div>
               <div className="form-input-icon">
                 <span className="icon">🔒</span>
                 <input
