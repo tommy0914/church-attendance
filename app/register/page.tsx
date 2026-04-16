@@ -18,6 +18,7 @@ function RegisterForm() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [showAdminCode, setShowAdminCode] = useState(false)
+  const [isSignedUp, setIsSignedUp] = useState(false)
 
   const nextUrl = searchParams.get('next')
 
@@ -47,47 +48,47 @@ function RegisterForm() {
           name: form.name, 
           phone: form.phone,
           gender: form.gender,
-          level: form.level
+          level: form.level,
+          role: isAdmin ? 'admin' : 'user'
         }
       }
     })
 
     if (signupError) {
-      setError(signupError.message)
+      if (signupError.message.includes('rate limit')) {
+        setError('Verification email already sent. Please wait an hour before requesting another.')
+      } else {
+        setError(signupError.message)
+      }
       setLoading(false)
       return
     }
 
-    // If admin code provided, update role
-    if (isAdmin && data.user) {
-      await supabase
-        .from('profiles')
-        .update({ 
-          role: 'admin', 
-          phone: form.phone,
-          gender: form.gender,
-          level: form.level
-        })
-        .eq('id', data.user.id)
-    } else if (data.user) {
-      await supabase
-        .from('profiles')
-        .update({ 
-          phone: form.phone,
-          gender: form.gender,
-          level: form.level
-        })
-        .eq('id', data.user.id)
-    }
+    setIsSignedUp(true)
+    setLoading(false)
+  }
 
-    if (nextUrl) {
-      router.push(nextUrl)
-    } else if (isAdmin) {
-      router.push('/admin')
-    } else {
-      router.push('/dashboard/profile')
-    }
-    router.refresh()
+  if (isSignedUp) {
+    return (
+      <div className="page-center" style={{ padding: 24 }}>
+        <div className="card fade-in" style={{ width: '100%', maxWidth: 440, textAlign: 'center', padding: '40px 24px' }}>
+          <div style={{ fontSize: '4rem', marginBottom: 20 }}>📧</div>
+          <h1 style={{ fontSize: '1.8rem', marginBottom: 12 }}>Check your email</h1>
+          <p style={{ color: 'var(--text-muted)', marginBottom: 24, lineHeight: 1.6 }}>
+            We've sent a verification link to <strong>{form.email}</strong>.<br/> 
+            Please click the link in your inbox (or spam folder) to activate your account.
+          </p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <Link href="/login" className="btn btn-primary">
+              Return to Login
+            </Link>
+            <button onClick={() => setIsSignedUp(false)} className="btn btn-ghost">
+              I used the wrong email address
+            </button>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
