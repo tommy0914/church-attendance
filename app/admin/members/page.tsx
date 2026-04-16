@@ -43,8 +43,9 @@ export default function MembersPage() {
     setLoading(false)
   }
 
-    console.log('Member selected:', member.id)
+  async function handleSelectMember(member: Member) {
     setSelectedMember(member)
+    setAttendanceHistory([])
     loadAttendanceHistory(member.id)
   }
 
@@ -170,14 +171,8 @@ export default function MembersPage() {
         </div>
       )}
 
-  async function handleSelectMember(member: Member) {
-    setSelectedMember(member)
-    setAttendanceHistory([])
-    loadAttendanceHistory(member.id)
-  }
-
-  // Member Profile Modal (Flex Card)
-  {selectedMember && (
+      {/* Member Profile Modal (Flex Card) */}
+      {selectedMember && (
     <div style={{
       position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
       background: 'rgba(0,0,0,0.6)', 
