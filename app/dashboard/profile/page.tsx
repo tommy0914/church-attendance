@@ -51,7 +51,7 @@ export default function ProfilePage() {
       setProfile(p)
       setForm({ name: p.name, phone: p.phone || '', address: p.address || '' })
     }
-    if (a) setAttendance(a as AttendanceRecord[])
+    if (a) setAttendance(a as unknown as AttendanceRecord[])
   }
 
   async function saveProfile() {
