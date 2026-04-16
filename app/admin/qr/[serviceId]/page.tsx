@@ -120,7 +120,7 @@ export default function QRDisplayPage() {
             Token: <code style={{ color: 'var(--accent-light)' }}>{service.qr_token.slice(0, 12)}…</code>
           </p>
 
-          <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
+          <div style={{ display: 'flex', gap: 10, justifyContent: 'center', marginBottom: 20 }}>
             <button onClick={downloadQR} className="btn btn-primary btn-sm">
               ⬇️ Download PNG
             </button>
@@ -130,6 +130,30 @@ export default function QRDisplayPage() {
             >
               🖨️ Print
             </button>
+          </div>
+
+          <div style={{ background: 'var(--bg-secondary)', padding: '12px 16px', borderRadius: 8, textAlign: 'left' }}>
+            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: 8, fontWeight: 600 }}>Or share direct link:</p>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <input 
+                type="text" 
+                readOnly 
+                value={service ? `${window.location.origin}/attend/${service.qr_token}` : ''}
+                className="form-input" 
+                style={{ flex: 1, fontSize: '0.8rem', padding: '8px 12px' }} 
+              />
+              <button 
+                id="copy-btn"
+                className="btn btn-secondary btn-sm" 
+                onClick={(e) => {
+                  navigator.clipboard.writeText(`${window.location.origin}/attend/${service?.qr_token}`);
+                  e.currentTarget.innerText = '✅ Copied!';
+                  setTimeout(() => { e.currentTarget.innerText = '📋 Copy' }, 2000);
+                }}
+              >
+                📋 Copy
+              </button>
+            </div>
           </div>
         </div>
 
