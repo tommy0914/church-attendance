@@ -79,7 +79,7 @@ export default function ProfilePage() {
     setUploading(true)
     const supabase = createClient()
     const ext = file.name.split('.').pop()
-    const path = `${profile.id}.${ext}`
+    const path = `${profile.id}/avatar.${ext}`
 
     const { error: upErr } = await supabase.storage
       .from('avatars')
@@ -88,8 +88,12 @@ export default function ProfilePage() {
     if (upErr) { setMsg('Upload failed: ' + upErr.message); setUploading(false); return }
 
     const { data } = supabase.storage.from('avatars').getPublicUrl(path)
-    await supabase.from('profiles').update({ avatar_url: data.publicUrl }).eq('id', profile.id)
-    setProfile(prev => prev ? { ...prev, avatar_url: data.publicUrl } : prev)
+
+    // Add a cache-busting timestamp to the URL to force the browser to reload the new image
+    const publicUrlWithCacheBust = `${data.publicUrl}?t=${Date.now()}`
+
+    await supabase.from('profiles').update({ avatar_url: publicUrlWithCacheBust }).eq('id', profile.id)
+    setProfile(prev => prev ? { ...prev, avatar_url: publicUrlWithCacheBust } : prev)
     setUploading(false)
     setMsg('Avatar updated!')
   }

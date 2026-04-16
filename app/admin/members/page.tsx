@@ -7,6 +7,7 @@ interface Member {
   name: string
   phone: string | null
   address: string | null
+  avatar_url: string | null
   role: string
   created_at: string
   attendance_count?: number
@@ -24,7 +25,7 @@ export default function MembersPage() {
     const supabase = createClient()
     const { data: profiles } = await supabase
       .from('profiles')
-      .select('id, name, phone, address, role, created_at')
+      .select('id, name, phone, address, avatar_url, role, created_at')
       .order('name')
 
     if (!profiles) { setLoading(false); return }
@@ -106,8 +107,14 @@ export default function MembersPage() {
                           width: 32, height: 32, borderRadius: '50%',
                           background: m.role === 'admin' ? 'var(--accent)' : 'var(--bg-secondary)',
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          fontSize: '0.85rem', fontWeight: 700, border: '1px solid var(--border)'
-                        }}>{m.name[0]}</div>
+                          fontSize: '0.85rem', fontWeight: 700, border: '1px solid var(--border)',
+                          overflow: 'hidden'
+                        }}>
+                          {m.avatar_url 
+                            ? <img src={m.avatar_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                            : m.name[0]
+                          }
+                        </div>
                         <span style={{ fontWeight: 500, color: 'var(--text-primary)' }}>{m.name}</span>
                       </div>
                     </td>
@@ -162,8 +169,13 @@ export default function MembersPage() {
                 background: selectedMember.role === 'admin' ? 'var(--accent)' : 'var(--bg-secondary)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontSize: '2rem', fontWeight: 700, border: '4px solid var(--border)',
-                marginBottom: 16
-              }}>{selectedMember.name[0]}</div>
+                marginBottom: 16, overflow: 'hidden'
+              }}>
+                {selectedMember.avatar_url 
+                  ? <img src={selectedMember.avatar_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  : selectedMember.name[0]
+                }
+              </div>
               <h2 style={{ fontSize: '1.5rem', marginBottom: 4 }}>{selectedMember.name}</h2>
               <span className={`badge ${selectedMember.role === 'admin' ? 'badge-admin' : 'badge-member'}`}>
                 {selectedMember.role.toUpperCase()}
