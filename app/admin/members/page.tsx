@@ -8,6 +8,8 @@ interface Member {
   phone: string | null
   address: string | null
   avatar_url: string | null
+  gender: string | null
+  level: string | null
   role: string
   created_at: string
   attendance_count?: number
@@ -44,7 +46,7 @@ export default function MembersPage() {
     const supabase = createClient()
     const { data: profiles } = await supabase
       .from('profiles')
-      .select('id, name, phone, address, avatar_url, role, created_at')
+      .select('id, name, phone, address, avatar_url, gender, level, role, created_at')
       .order('name')
 
     if (!profiles) { setLoading(false); return }
@@ -266,6 +268,16 @@ export default function MembersPage() {
               <div>
                 <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: 2 }}>Address</p>
                 <p style={{ fontWeight: 500, lineHeight: 1.4 }}>{selectedMember.address || 'Not provided'}</p>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                <div>
+                  <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: 2 }}>Gender</p>
+                  <p style={{ fontWeight: 500 }}>{selectedMember.gender || 'Not specified'}</p>
+                </div>
+                <div>
+                  <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: 2 }}>Level</p>
+                  <p style={{ fontWeight: 500 }}>{selectedMember.level || 'Not specified'}</p>
+                </div>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
                 <div>

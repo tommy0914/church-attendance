@@ -9,7 +9,10 @@ const ADMIN_CODE = 'CHURCH-ADMIN-2024' // change this secret in production
 function RegisterForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const [form, setForm] = useState({ name: '', email: '', password: '', phone: '', adminCode: '' })
+  const [form, setForm] = useState({ 
+    name: '', email: '', password: '', phone: '', 
+    gender: '', level: '', adminCode: '' 
+  })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [showAdminCode, setShowAdminCode] = useState(false)
@@ -32,7 +35,12 @@ function RegisterForm() {
       email: form.email,
       password: form.password,
       options: {
-        data: { name: form.name, phone: form.phone }
+        data: { 
+          name: form.name, 
+          phone: form.phone,
+          gender: form.gender,
+          level: form.level
+        }
       }
     })
 
@@ -46,12 +54,21 @@ function RegisterForm() {
     if (isAdmin && data.user) {
       await supabase
         .from('profiles')
-        .update({ role: 'admin', phone: form.phone })
+        .update({ 
+          role: 'admin', 
+          phone: form.phone,
+          gender: form.gender,
+          level: form.level
+        })
         .eq('id', data.user.id)
     } else if (data.user) {
       await supabase
         .from('profiles')
-        .update({ phone: form.phone })
+        .update({ 
+          phone: form.phone,
+          gender: form.gender,
+          level: form.level
+        })
         .eq('id', data.user.id)
     }
 
@@ -100,6 +117,30 @@ function RegisterForm() {
               <label className="form-label">Email Address</label>
               <input id="reg-email" type="email" className="form-input" placeholder="you@example.com"
                 value={form.email} onChange={e => update('email', e.target.value)} required autoComplete="email" />
+            </div>
+
+            <div className="grid-2" style={{ gap: 16 }}>
+              <div className="form-group">
+                <label className="form-label">Gender</label>
+                <select className="form-input" value={form.gender} onChange={e => update('gender', e.target.value)} required>
+                  <option value="">Select Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Current Level</label>
+                <select className="form-input" value={form.level} onChange={e => update('level', e.target.value)} required>
+                  <option value="">Select Level</option>
+                  <option value="100L">100L</option>
+                  <option value="200L">200L</option>
+                  <option value="300L">300L</option>
+                  <option value="400L">400L</option>
+                  <option value="500L">500L</option>
+                  <option value="Other">Other / Non-Student</option>
+                </select>
+              </div>
             </div>
 
             <div className="form-group">

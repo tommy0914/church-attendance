@@ -8,6 +8,8 @@ interface Profile {
   phone: string
   address: string
   avatar_url: string | null
+  gender: string | null
+  level: string | null
   role: string
   created_at: string
 }
@@ -22,7 +24,7 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState<Profile | null>(null)
   const [attendance, setAttendance] = useState<AttendanceRecord[]>([])
   const [editing, setEditing] = useState(false)
-  const [form, setForm] = useState({ name: '', phone: '', address: '' })
+  const [form, setForm] = useState({ name: '', phone: '', address: '', gender: '', level: '' })
   const [saving, setSaving] = useState(false)
   const [msg, setMsg] = useState('')
   const [uploading, setUploading] = useState(false)
@@ -49,7 +51,13 @@ export default function ProfilePage() {
 
     if (p) {
       setProfile(p)
-      setForm({ name: p.name, phone: p.phone || '', address: p.address || '' })
+      setForm({ 
+        name: p.name, 
+        phone: p.phone || '', 
+        address: p.address || '',
+        gender: p.gender || '',
+        level: p.level || ''
+      })
     }
     if (a) setAttendance(a as unknown as AttendanceRecord[])
   }
@@ -159,6 +167,8 @@ export default function ProfilePage() {
               <span>✉️ </span>{profile.id.slice(0, 8)}…
             </div>
             {profile.phone && <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>📞 {profile.phone}</div>}
+            {profile.gender && <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>👤 {profile.gender}</div>}
+            {profile.level && <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>🎓 {profile.level}</div>}
             {profile.address && <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>📍 {profile.address}</div>}
           </div>
 
@@ -194,6 +204,29 @@ export default function ProfilePage() {
                   <input type="tel" className="form-input" value={form.phone}
                     onChange={e => setForm(p => ({ ...p, phone: e.target.value }))} />
                 </div>
+                <div className="grid-2" style={{ gap: 16 }}>
+                  <div className="form-group">
+                    <label className="form-label">Gender</label>
+                    <select className="form-input" value={form.gender} onChange={e => setForm(p => ({ ...p, gender: e.target.value }))}>
+                      <option value="">Select Gender</option>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Level</label>
+                    <select className="form-input" value={form.level} onChange={e => setForm(p => ({ ...p, level: e.target.value }))}>
+                      <option value="">Select Level</option>
+                      <option value="100L">100L</option>
+                      <option value="200L">200L</option>
+                      <option value="300L">300L</option>
+                      <option value="400L">400L</option>
+                      <option value="500L">500L</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+                </div>
+
                 <div className="form-group">
                   <label className="form-label">Address</label>
                   <input type="text" className="form-input" value={form.address}
