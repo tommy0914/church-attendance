@@ -11,8 +11,10 @@ function RegisterForm() {
   const searchParams = useSearchParams()
   const [form, setForm] = useState({ 
     name: '', email: '', password: '', phone: '', 
-    gender: '', level: '', adminCode: '' 
+    gender: '', level: '', adminCode: '',
+    confirmPassword: ''
   })
+  const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [showAdminCode, setShowAdminCode] = useState(false)
@@ -26,6 +28,12 @@ function RegisterForm() {
   async function handleRegister(e: React.FormEvent) {
     e.preventDefault()
     setError('')
+
+    if (form.password !== form.confirmPassword) {
+      setError('Passwords do not match')
+      return
+    }
+
     setLoading(true)
 
     const isAdmin = form.adminCode === ADMIN_CODE
@@ -151,9 +159,29 @@ function RegisterForm() {
 
             <div className="form-group">
               <label className="form-label">Password</label>
-              <input id="reg-password" type="password" className="form-input" placeholder="Min. 6 characters"
-                value={form.password} onChange={e => update('password', e.target.value)}
-                required minLength={6} autoComplete="new-password" />
+              <div className="form-input-icon">
+                <span className="icon">🔒</span>
+                <input id="reg-password" type={showPassword ? 'text' : 'password'} className="form-input" placeholder="Min. 6 characters"
+                  value={form.password} onChange={e => update('password', e.target.value)}
+                  required minLength={6} autoComplete="new-password" />
+                <button 
+                  type="button" 
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1rem', color: 'var(--text-muted)' }}
+                >
+                  {showPassword ? '👁️' : '🙈'}
+                </button>
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Confirm Password</label>
+              <div className="form-input-icon">
+                <span className="icon">🔒</span>
+                <input id="reg-confirm" type={showPassword ? 'text' : 'password'} className="form-input" placeholder="Repeat password"
+                  value={form.confirmPassword} onChange={e => update('confirmPassword', e.target.value)}
+                  required minLength={6} autoComplete="new-password" />
+              </div>
             </div>
 
             {/* Admin code toggle */}

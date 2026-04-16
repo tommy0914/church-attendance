@@ -7,6 +7,7 @@ export default function ResetPasswordPage() {
   const router = useRouter()
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
@@ -73,26 +74,39 @@ export default function ResetPasswordPage() {
 
               <div className="form-group">
                 <label className="form-label">New Password</label>
-                <input
-                  type="password"
-                  className="form-input"
-                  placeholder="Min. 6 characters"
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
-                  required
-                />
+                <div className="form-input-icon">
+                  <span className="icon">🔒</span>
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    className="form-input"
+                    placeholder="Min. 6 characters"
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    required
+                  />
+                  <button 
+                    type="button" 
+                    onClick={() => setShowPassword(!showPassword)}
+                    style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1rem', color: 'var(--text-muted)' }}
+                  >
+                    {showPassword ? '👁️' : '🙈'}
+                  </button>
+                </div>
               </div>
 
               <div className="form-group">
                 <label className="form-label">Confirm New Password</label>
-                <input
-                  type="password"
-                  className="form-input"
-                  placeholder="Repeat new password"
-                  value={confirmPassword}
-                  onChange={e => setConfirmPassword(e.target.value)}
-                  required
-                />
+                <div className="form-input-icon">
+                  <span className="icon">🔒</span>
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    className="form-input"
+                    placeholder="Repeat new password"
+                    value={confirmPassword}
+                    onChange={e => setConfirmPassword(e.target.value)}
+                    required
+                  />
+                </div>
               </div>
 
               <button

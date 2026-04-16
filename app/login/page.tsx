@@ -9,6 +9,7 @@ function LoginForm() {
   const searchParams = useSearchParams()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -100,7 +101,7 @@ function LoginForm() {
                 <span className="icon">🔒</span>
                 <input
                   id="password"
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   className="form-input"
                   placeholder="••••••••"
                   value={password}
@@ -108,6 +109,13 @@ function LoginForm() {
                   required
                   autoComplete="current-password"
                 />
+                <button 
+                  type="button" 
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1rem', color: 'var(--text-muted)' }}
+                >
+                  {showPassword ? '👁️' : '🙈'}
+                </button>
               </div>
             </div>
 
