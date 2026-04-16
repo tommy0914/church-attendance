@@ -18,6 +18,8 @@ export default function MembersPage() {
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [selectedMember, setSelectedMember] = useState<Member | null>(null)
+  const [attendanceHistory, setAttendanceHistory] = useState<{name: string, date: string}[]>([])
+  const [loadingHistory, setLoadingHistory] = useState(false)
 
   useEffect(() => { loadMembers() }, [])
 
@@ -39,6 +41,32 @@ export default function MembersPage() {
 
     setMembers(profiles.map((p, i) => ({ ...p, attendance_count: counts[i].count ?? 0 })))
     setLoading(false)
+  }
+
+    console.log('Member selected:', member.id)
+    setSelectedMember(member)
+    loadAttendanceHistory(member.id)
+  }
+
+  async function loadAttendanceHistory(memberId: string) {
+    setLoadingHistory(true)
+    const supabase = createClient()
+    const { data } = await supabase
+      .from('attendance')
+      .select('scanned_at, services(name)')
+      .eq('user_id', memberId)
+      .order('scanned_at', { ascending: false })
+      .limit(10)
+
+    if (data) {
+      setAttendanceHistory(data.map((a: any) => ({
+        name: a.services?.name || 'Unknown Service',
+        date: new Date(a.scanned_at).toLocaleDateString()
+      })))
+    } else {
+      setAttendanceHistory([])
+    }
+    setLoadingHistory(false)
   }
 
   async function toggleAdmin(member: Member) {
@@ -97,7 +125,7 @@ export default function MembersPage() {
                 {filtered.map(m => (
                   <tr 
                     key={m.id} 
-                    onClick={() => setSelectedMember(m)} 
+                    onClick={() => handleSelectMember(m)} 
                     style={{ cursor: 'pointer' }}
                     className="hover-row"
                   >
@@ -142,20 +170,28 @@ export default function MembersPage() {
         </div>
       )}
 
-      {/* Member Profile Modal (Flex Card) */}
-      {selectedMember && (
-        <div style={{
-          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-          background: 'rgba(0,0,0,0.6)', 
-          backdropFilter: 'blur(4px)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          zIndex: 1000, padding: 20
-        }} onClick={() => setSelectedMember(null)}>
-          <div className="card fade-in" style={{ 
-            maxWidth: 400, width: '100%', 
-            position: 'relative', 
-            boxShadow: '0 20px 40px rgba(0,0,0,0.5)'
-          }} onClick={e => e.stopPropagation()}>
+  async function handleSelectMember(member: Member) {
+    setSelectedMember(member)
+    setAttendanceHistory([])
+    loadAttendanceHistory(member.id)
+  }
+
+  // Member Profile Modal (Flex Card)
+  {selectedMember && (
+    <div style={{
+      position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+      background: 'rgba(0,0,0,0.6)', 
+      backdropFilter: 'blur(4px)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      zIndex: 1000, padding: 20
+    }} onClick={() => setSelectedMember(null)}>
+      <div className="card fade-in" style={{ 
+        maxWidth: 440, width: '100%', 
+        position: 'relative', 
+        boxShadow: '0 20px 40px rgba(0,0,0,0.5)',
+        maxHeight: '90vh',
+        overflowY: 'auto'
+      }} onClick={e => e.stopPropagation()}>
             <button 
               onClick={() => setSelectedMember(null)}
               style={{ position: 'absolute', top: 16, right: 16, background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '1.2rem' }}
@@ -201,6 +237,33 @@ export default function MembersPage() {
                   <p style={{ fontWeight: 500 }}>{new Date(selectedMember.created_at).toLocaleDateString()}</p>
                 </div>
               </div>
+            </div>
+
+            <div style={{ marginBottom: 24 }}>
+              <h3 style={{ fontSize: '0.9rem', marginBottom: 12, display: 'flex', justifyContent: 'space-between' }}>
+                Recent Attendance 
+                <span style={{ fontSize: '0.8rem', fontWeight: 400, color: 'var(--text-muted)' }}>Last 10 services</span>
+              </h3>
+              {loadingHistory ? (
+                <div style={{ display: 'flex', justifyContent: 'center', padding: 20 }}><div className="spinner" /></div>
+              ) : attendanceHistory.length === 0 ? (
+                <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', textAlign: 'center', background: 'var(--bg-secondary)', padding: 16, borderRadius: 8 }}>
+                  No attendance records found yet.
+                </p>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  {attendanceHistory.map((h, i) => (
+                    <div key={i} style={{ 
+                      display: 'flex', justifyContent: 'space-between', 
+                      padding: '8px 12px', background: 'var(--bg-secondary)', 
+                      borderRadius: 8, fontSize: '0.85rem' 
+                    }}>
+                      <span style={{ fontWeight: 500 }}>{h.name}</span>
+                      <span style={{ color: 'var(--text-muted)' }}>{h.date}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div style={{ display: 'flex', gap: 12 }}>
