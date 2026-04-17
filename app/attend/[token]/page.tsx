@@ -69,10 +69,10 @@ export default function AttendPage() {
           service.latitude, service.longitude
         )
 
-        // 300 meters buffer
-        if (dist > 300) {
+        // 200 meters buffer
+        if (dist > 200) {
           setStatus('too_far')
-          setMessage(`You are approximately ${Math.round(dist)} meters away from the building. You must be on the church premises to check in.`)
+          setMessage(`You are approximately ${Math.round(dist)} meters away from the building. You must be on the church premises (within 200m) to check in.`)
           return
         }
       } catch (err: any) {

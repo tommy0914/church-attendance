@@ -41,12 +41,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <nav className="nav">
-        <Link href="/" className="nav-logo">
+        <Link href="/dashboard" className="nav-logo">
           <div className="logo-icon">✝️</div>
           <span>ChurchAttend</span>
         </Link>
 
         <div className="nav-links">
+          <Link href="/dashboard" className={`nav-link ${pathname === '/dashboard' ? 'active' : ''}`}>
+            🏠 <span>Home</span>
+          </Link>
           {links.map(l => (
             <Link
               key={l.href}

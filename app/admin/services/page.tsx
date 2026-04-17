@@ -82,6 +82,36 @@ export default function ServicesPage() {
     setServices(prev => prev.filter(s => s.id !== id))
   }
 
+  async function downloadCSV(serviceId: string, serviceName: string) {
+    const supabase = createClient()
+    const { data, error } = await supabase
+      .from('attendance')
+      .select('scanned_at, profiles(name, phone, level, gender)')
+      .eq('service_id', serviceId)
+
+    if (error || !data) {
+      alert('Error fetching attendance: ' + (error?.message || 'No data'))
+      return
+    }
+
+    const headers = ['Name', 'Phone', 'Gender', 'Level', 'Check-in Time']
+    const rows = data.map((a: any) => [
+      a.profiles?.name || 'Unknown',
+      a.profiles?.phone || '—',
+      a.profiles?.gender || '—',
+      a.profiles?.level || '—',
+      new Date(a.scanned_at).toLocaleString()
+    ])
+
+    const csvContent = [headers, ...rows].map(r => r.join(',')).join('\n')
+    const blob = new Blob([csvContent], { type: 'text/csv' })
+    const url = window.URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `${serviceName.replace(/\s+/g, '_')}_Attendance.csv`
+    a.click()
+  }
+
   return (
     <div className="layout-container">
       <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -197,6 +227,9 @@ export default function ServicesPage() {
                 </div>
               </div>
               <div style={{ display: 'flex', gap: 10 }}>
+                <button onClick={() => downloadCSV(svc.id, svc.name)} className="btn btn-secondary btn-sm" title="Download Report">
+                  📥 Export
+                </button>
                 <Link href={`/admin/qr/${svc.id}`} className="btn btn-primary btn-sm">
                   📱 Show QR
                 </Link>

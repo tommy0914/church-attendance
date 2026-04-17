@@ -184,10 +184,53 @@ export default function ProfilePage() {
             <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--accent-light)' }}>{attendance.length}</div>
             <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Services Attended</div>
           </div>
+
+          {/* Badges Section */}
+          <div style={{ marginTop: 24, textAlign: 'left' }}>
+            <h4 style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 12 }}>Achievements</h4>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+               {attendance.length >= 10 && (
+                 <div className="achievement-badge" title="Attended 10+ services">⭐ Dedicated</div>
+               )}
+               {(() => {
+                 const thirtyDaysAgo = new Date()
+                 thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+                 const recentCount = attendance.filter(a => new Date(a.scanned_at) > thirtyDaysAgo).length
+                 return recentCount >= 4 ? (
+                   <div className="achievement-badge" title="4 services in 30 days">🕯️ Faithful Servant</div>
+                 ) : null
+               })()}
+               {(() => {
+                 const joinDate = new Date(profile.created_at)
+                 const now = new Date()
+                 // Earned if joined within the first 60 days of the project or just "Early" logic
+                 return joinDate < new Date('2024-12-31') ? (
+                    <div className="achievement-badge" title="Joined in 2024">🚀 Early Adopter</div>
+                 ) : null
+               })()}
+               {attendance.length === 0 && (
+                 <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontStyle: 'italic' }}>No badges yet. Scan to earn!</p>
+               )}
+            </div>
+          </div>
         </div>
 
         {/* Right panel */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+          <style jsx>{`
+            .achievement-badge {
+              background: var(--accent-alpha);
+              color: var(--accent-light);
+              padding: 4px 10px;
+              border-radius: 6px;
+              font-size: 0.75rem;
+              font-weight: 600;
+              border: 1px solid rgba(108, 99, 255, 0.2);
+              display: flex;
+              align-items: center;
+              gap: 4px;
+            }
+          `}</style>
           {/* Edit Form */}
           {editing && (
             <div className="card fade-in">

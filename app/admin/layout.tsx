@@ -15,7 +15,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   const links = [
-    { href: '/admin', label: 'Dashboard', icon: '📊', exact: true },
+    { href: '/admin', label: 'Monitor', icon: '📊', exact: true },
+    { href: '/admin/analytics', label: 'Insights', icon: '📈' },
+    { href: '/admin/communication', label: 'Communicate', icon: '📢' },
     { href: '/admin/services', label: 'Services', icon: '🗓️' },
     { href: '/admin/services', label: 'QR Codes', icon: '📱', exact: false, highlight: true },
     { href: '/admin/members', label: 'Members', icon: '👥' },
