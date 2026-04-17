@@ -49,7 +49,7 @@ function RegisterForm() {
           phone: form.phone,
           gender: form.gender,
           level: form.level,
-          role: isAdmin ? 'admin' : 'user'
+          role: isAdmin ? 'admin' : 'member'
         }
       }
     })
