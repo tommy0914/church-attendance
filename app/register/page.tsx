@@ -57,6 +57,8 @@ function RegisterForm() {
     if (signupError) {
       if (signupError.message.includes('rate limit')) {
         setError('Verification email already sent. Please wait an hour before requesting another.')
+      } else if (signupError.message.includes('Error sending confirmation email')) {
+        setError('System busy: Email limit reached. Please try again in an hour or contact the church admin.')
       } else {
         setError(signupError.message)
       }
