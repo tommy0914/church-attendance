@@ -146,7 +146,7 @@ export default function MembersPage() {
           placeholder="🔍 Search by name or phone…"
           value={search}
           onChange={e => setSearch(e.target.value)}
-          style={{ width: 260 }}
+          style={{ width: '100%', maxWidth: 260 }}
         />
       </div>
 
@@ -162,10 +162,10 @@ export default function MembersPage() {
                 <tr>
                   <th>Name</th>
                   <th>Phone</th>
-                  <th>Address</th>
+                  <th className="hide-mobile">Address</th>
                   <th>Role</th>
                   <th>Services</th>
-                  <th>Joined</th>
+                  <th className="hide-mobile">Joined</th>
                   <th></th>
                 </tr>
               </thead>
@@ -195,10 +195,10 @@ export default function MembersPage() {
                       </div>
                     </td>
                     <td>{m.phone ?? '—'}</td>
-                    <td style={{ maxWidth: 200, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={m.address ?? ''}>{m.address ?? '—'}</td>
+                    <td className="hide-mobile" style={{ maxWidth: 200, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={m.address ?? ''}>{m.address ?? '—'}</td>
                     <td><span className={`badge ${m.role === 'admin' ? 'badge-admin' : 'badge-member'}`}>{m.role}</span></td>
                     <td>{m.attendance_count}</td>
-                    <td>{new Date(m.created_at).toLocaleDateString()}</td>
+                    <td className="hide-mobile">{new Date(m.created_at).toLocaleDateString()}</td>
                     <td>
                       <button
                         onClick={(e) => { e.stopPropagation(); toggleAdmin(m); }}

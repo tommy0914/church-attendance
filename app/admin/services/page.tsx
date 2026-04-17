@@ -226,7 +226,7 @@ export default function ServicesPage() {
                   <span>→ {new Date(svc.end_time).toLocaleString()}</span>
                 </div>
               </div>
-              <div style={{ display: 'flex', gap: 10 }}>
+              <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'flex-start' }}>
                 <button onClick={() => downloadCSV(svc.id, svc.name)} className="btn btn-secondary btn-sm" title="Download Report">
                   📥 Export
                 </button>

@@ -118,9 +118,9 @@ export default function AnalyticsPage() {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 24, marginBottom: 24 }}>
+      <div className="grid-stack" style={{ marginBottom: 24 }}>
         {/* Attendance Trend Chart */}
-        <div className="card" style={{ height: 400 }}>
+        <div className="card" style={{ minHeight: 400 }}>
           <h3 style={{ marginBottom: 24, display: 'flex', alignItems: 'center', gap: 8 }}>
             <TrendingUp size={18} color="var(--accent)" /> Attendance Trend
           </h3>

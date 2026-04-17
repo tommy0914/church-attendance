@@ -57,7 +57,7 @@ export default function MemberDashboard() {
         <p className="page-subtitle">Stay connected with your church community</p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 32 }}>
+      <div className="grid-stack">
         
         {/* Main Content: Announcements */}
         <div>
