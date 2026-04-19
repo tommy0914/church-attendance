@@ -133,12 +133,35 @@ export default function MembersPage() {
     (m.phone ?? '').includes(search)
   )
 
+  async function downloadDirectoryCSV() {
+    const headers = ['Name', 'Phone', 'Gender', 'Level', 'Role', 'Joined Date']
+    const rows = members.map(m => [
+      m.name,
+      m.phone || '—',
+      m.gender || '—',
+      m.level || '—',
+      m.role,
+      new Date(m.created_at).toLocaleDateString()
+    ])
+
+    const csvContent = [headers, ...rows].map(r => r.join(',')).join('\n')
+    const blob = new Blob([csvContent], { type: 'text/csv' })
+    const url = window.URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `Church_Directory_${new Date().toLocaleDateString().replace(/\//g, '-')}.csv`
+    a.click()
+  }
+
   return (
     <div className="layout-container">
       <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16 }}>
         <div>
           <h1 className="page-title">Members</h1>
           <p className="page-subtitle">{members.length} registered members</p>
+          <button onClick={downloadDirectoryCSV} className="btn btn-secondary btn-sm" style={{ marginTop: 8 }}>
+            📥 Export Directory (CSV)
+          </button>
         </div>
         <input
           type="text"

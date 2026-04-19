@@ -82,6 +82,50 @@ export default function ServicesPage() {
     setServices(prev => prev.filter(s => s.id !== id))
   }
 
+  async function downloadAbsenteesCSV(serviceId: string, serviceName: string) {
+    const supabase = createClient()
+    
+    // 1. Get all registered members
+    const { data: allMembers } = await supabase
+      .from('profiles')
+      .select('id, name, phone, level, gender')
+    
+    // 2. Get everyone who was present
+    const { data: attendance } = await supabase
+      .from('attendance')
+      .select('user_id')
+      .eq('service_id', serviceId)
+
+    if (!allMembers || !attendance) {
+      alert('Error fetching data')
+      return
+    }
+
+    const presentIds = new Set(attendance.map(a => a.user_id))
+    const absentees = allMembers.filter(m => !presentIds.has(m.id))
+
+    if (absentees.length === 0) {
+      alert('Everyone was present! No absentees to report.')
+      return
+    }
+
+    const headers = ['Name', 'Phone', 'Gender', 'Level']
+    const rows = absentees.map(m => [
+      m.name,
+      m.phone || '—',
+      m.gender || '—',
+      m.level || '—'
+    ])
+
+    const csvContent = [headers, ...rows].map(r => r.join(',')).join('\n')
+    const blob = new Blob([csvContent], { type: 'text/csv' })
+    const url = window.URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `${serviceName.replace(/\s+/g, '_')}_Absentees.csv`
+    a.click()
+  }
+
   async function downloadCSV(serviceId: string, serviceName: string) {
     const supabase = createClient()
     const { data, error } = await supabase
@@ -227,8 +271,11 @@ export default function ServicesPage() {
                 </div>
               </div>
               <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'flex-start' }}>
-                <button onClick={() => downloadCSV(svc.id, svc.name)} className="btn btn-secondary btn-sm" title="Download Report">
-                  📥 Export
+                <button onClick={() => downloadCSV(svc.id, svc.name)} className="btn btn-secondary btn-sm" title="Download Present Report">
+                  📥 Present
+                </button>
+                <button onClick={() => downloadAbsenteesCSV(svc.id, svc.name)} className="btn btn-ghost btn-sm" style={{ borderColor: 'var(--error)', color: 'var(--error)' }} title="Download Absentee Report">
+                  🚫 Absentees
                 </button>
                 <Link href={`/admin/qr/${svc.id}`} className="btn btn-primary btn-sm">
                   📱 Show QR
