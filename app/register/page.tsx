@@ -98,16 +98,9 @@ function RegisterForm() {
       <div className="fade-in" style={{ width: '100%', maxWidth: 440 }}>
         {/* Logo */}
         <div className="text-center" style={{ marginBottom: 36 }}>
-          <div style={{
-            width: 60, height: 60,
-            background: 'linear-gradient(135deg, var(--accent), var(--accent-dark))',
-            borderRadius: 16,
-            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '1.8rem', marginBottom: 16,
-            boxShadow: '0 0 30px var(--accent-glow)'
-          }}>✝️</div>
-          <h1 style={{ fontSize: '1.6rem', marginBottom: 6 }}>Create an account</h1>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Join your church community</p>
+          <div style={{ fontSize: '3rem', marginBottom: 16 }}>🙌</div>
+          <h1 style={{ fontSize: '1.8rem', marginBottom: 8 }}>Join the Ministry</h1>
+          <p style={{ color: 'var(--text-secondary)' }}>Faith Baptist Young Adults & Youths</p>
         </div>
 
         <div className="card">
@@ -155,8 +148,8 @@ function RegisterForm() {
             </div>
 
             <div className="form-group">
-              <label className="form-label">Phone Number <span style={{ color: 'var(--text-muted)' }}>(optional)</span></label>
-              <input id="phone" type="tel" className="form-input" placeholder="+1 234 567 8900"
+              <label className="form-label">Phone Number</label>
+              <input type="tel" className="form-input" placeholder="+1 (555) 000-0000"
                 value={form.phone} onChange={e => update('phone', e.target.value)} />
             </div>
 

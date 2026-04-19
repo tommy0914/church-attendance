@@ -31,8 +31,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <nav className="nav">
         <Link href="/admin" className="nav-logo">
-          <div className="logo-icon">✝️</div>
-          <span>ChurchAttend <span style={{ color: 'var(--accent-light)', fontSize: '0.75rem', fontWeight: 600 }}>Admin</span></span>
+          <div className="logo-icon" style={{ background: 'white', color: 'var(--accent)' }}>✝️</div>
+          <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1 }}>
+            <span style={{ fontSize: '1rem', fontWeight: 800 }}>Faith Baptist Church</span>
+            <span style={{ fontSize: '0.7rem', fontWeight: 500, opacity: 0.9 }}>Admin Overview</span>
+          </div>
         </Link>
 
         <div className="nav-links">

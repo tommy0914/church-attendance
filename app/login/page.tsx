@@ -50,19 +50,11 @@ function LoginForm() {
 
   return (
     <div className="page-center" style={{ padding: 24 }}>
-      <div className="fade-in" style={{ width: '100%', maxWidth: 420 }}>
-        {/* Logo */}
-        <div className="text-center" style={{ marginBottom: 36 }}>
-          <div style={{
-            width: 60, height: 60,
-            background: 'linear-gradient(135deg, var(--accent), var(--accent-dark))',
-            borderRadius: 16,
-            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '1.8rem', marginBottom: 16,
-            boxShadow: '0 0 30px var(--accent-glow)'
-          }}>✝️</div>
-          <h1 style={{ fontSize: '1.6rem', marginBottom: 6 }}>Welcome back</h1>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Sign in to your ChurchAttend account</p>
+      <div className="card-glass fade-in" style={{ maxWidth: 420, width: '100%', padding: 40, border: '1px solid var(--border-strong)' }}>
+        <div style={{ textAlign: 'center', marginBottom: 32 }}>
+          <div style={{ fontSize: '3rem', marginBottom: 16 }}>⛪</div>
+          <h1 style={{ fontSize: '1.8rem', marginBottom: 8 }}>Welcome Back</h1>
+          <p style={{ color: 'var(--text-secondary)' }}>Faith Baptist Young Adult Portal</p>
         </div>
 
         <div className="card">

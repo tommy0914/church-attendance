@@ -54,7 +54,7 @@ export default function MemberDashboard() {
         <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           Welcome back, {userName}! <Sparkles color="var(--accent)" />
         </h1>
-        <p className="page-subtitle">Stay connected with your church community</p>
+        <p className="page-subtitle">Welcome to the Faith Baptist Church Youth Portal</p>
       </div>
 
       <div className="grid-stack">
