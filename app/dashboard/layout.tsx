@@ -34,7 +34,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     { href: '/dashboard/profile', label: 'Profile', icon: '👤' },
     { href: '/dashboard/scan', label: 'Scan QR', icon: '📷' },
     ...(role === 'admin' ? [
-      { href: '/admin', label: 'Admin', icon: '⚙️' },
+      { href: '/admin', label: 'Admin Dashboard', icon: '⚙️' },
     ] : []),
   ]
 

@@ -65,7 +65,7 @@ export default function CommunicationPage() {
         <p className="page-subtitle">Manage announcements and respond to prayer requests</p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 32 }}>
+      <div className="communication-grid">
         
         {/* Announcements Section */}
         <section>
@@ -81,7 +81,7 @@ export default function CommunicationPage() {
                 value={newAnnouncement}
                 onChange={e => setNewAnnouncement(e.target.value)}
               />
-              <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+              <div className="communication-actions" style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
                 <select className="form-input" style={{ width: 'auto' }} value={priority} onChange={e => setPriority(e.target.value)}>
                   <option value="normal">Normal Priority</option>
                   <option value="high">High Priority 🚨</option>

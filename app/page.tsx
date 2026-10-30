@@ -1,38 +1,7 @@
 'use client'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
-import { useRouter } from 'next/navigation'
 
 export default function HomePage() {
-  const router = useRouter()
-  const [checking, setChecking] = useState(true)
-
-  useEffect(() => {
-    // Fast-path: check localStorage for any Supabase session key instantly
-    const hasSession = Object.keys(localStorage).some(k => k.startsWith('sb-') && k.endsWith('-auth-token'))
-    if (hasSession) {
-      // Optimistically redirect, Supabase middleware will guard the route
-      router.replace('/dashboard/profile')
-      return
-    }
-
-    // No cached session — verify with network (needed for first visit / expired tokens)
-    const supabase = createClient()
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) router.replace('/dashboard/profile')
-      else setChecking(false)
-    })
-  }, [router])
-
-  if (checking) {
-    return (
-      <div className="page-center">
-        <div className="spinner" style={{ width: 32, height: 32 }} />
-      </div>
-    )
-  }
-
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       {/* Hero */}
@@ -53,7 +22,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          <h1 style={{ fontSize: '3rem', marginBottom: 16 }}>
+          <h1 style={{ fontSize: 'clamp(2rem, 10vw, 3rem)', marginBottom: 16 }}>
             <span style={{
               background: 'linear-gradient(135deg, var(--text-primary), var(--accent-light))',
               WebkitBackgroundClip: 'text',

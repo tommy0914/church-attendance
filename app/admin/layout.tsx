@@ -19,7 +19,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { href: '/admin/analytics', label: 'Insights', icon: '📈' },
     { href: '/admin/communication', label: 'Communicate', icon: '📢' },
     { href: '/admin/services', label: 'Services', icon: '🗓️' },
-    { href: '/admin/services', label: 'QR Codes', icon: '📱', exact: false, highlight: true },
     { href: '/admin/members', label: 'Members', icon: '👥' },
   ]
 
@@ -44,7 +43,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               key={`${l.label}-${l.href}`}
               href={l.href}
               className={`nav-link ${isActive(l.href, l.exact ?? false) ? 'active' : ''}`}
-              style={l.highlight ? { color: 'var(--accent-light)', fontWeight: 600, background: 'var(--accent-alpha)' } : {}}
             >
               <span>{l.icon}</span>
               <span>{l.label}</span>
@@ -53,8 +51,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
           <div style={{ width: 1, height: 24, background: 'var(--border)', margin: '0 8px' }} />
 
-          <Link href="/dashboard/profile" className="nav-link">
-            👤 <span>My Profile</span>
+          <Link href="/dashboard" className="nav-link">
+            👤 <span>Member Dashboard</span>
           </Link>
 
           <button onClick={handleSignOut} className="btn btn-ghost btn-sm">
