@@ -2,7 +2,7 @@
 
 A mobile friendly church attendance application designed to help church teams manage member registration, attendance check ins, and attendance records from one place.
 
-**Live application:** https://church-attendance-murex.vercel.app  
+**Live application:** https://church-attendance-kappa-three.vercel.app/
 **Source code:** https://github.com/tommy0914/church-attendance
 
 ## Overview
