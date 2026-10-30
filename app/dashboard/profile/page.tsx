@@ -121,7 +121,7 @@ export default function ProfilePage() {
         <p className="page-subtitle">Manage your account and view attendance history</p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '300px 1fr', gap: 24, alignItems: 'start' }}>
+      <div className="profile-grid">
         {/* Profile Card */}
         <div className="card" style={{ textAlign: 'center' }}>
           {/* Avatar */}
@@ -320,12 +320,6 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
-
-      <style>{`
-        @media (max-width: 768px) {
-          .profile-grid { grid-template-columns: 1fr !important; }
-        }
-      `}</style>
     </div>
   )
 }

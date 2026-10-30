@@ -50,7 +50,7 @@ function LoginForm() {
 
   return (
     <div className="page-center" style={{ padding: 24 }}>
-      <div className="card-glass fade-in" style={{ maxWidth: 420, width: '100%', padding: 40, border: '1px solid var(--border-strong)' }}>
+      <div className="card-glass fade-in" style={{ maxWidth: 420, width: '100%', padding: 'clamp(20px, 6vw, 40px)', border: '1px solid var(--border-strong)' }}>
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
           <div style={{ fontSize: '3rem', marginBottom: 16 }}>⛪</div>
           <h1 style={{ fontSize: '1.8rem', marginBottom: 8 }}>Welcome Back</h1>

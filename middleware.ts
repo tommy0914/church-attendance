@@ -36,22 +36,33 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl)
   }
 
-  // Admin-only routes: check profile role
-  if (user && pathname.startsWith('/admin')) {
+  const needsProfile = user && (
+    pathname.startsWith('/admin') ||
+    pathname === '/' ||
+    pathname === '/login' ||
+    pathname === '/register'
+  )
+  let role: string | null = null
+
+  if (needsProfile) {
     const { data: profile } = await supabase
       .from('profiles')
       .select('role')
       .eq('id', user.id)
       .single()
+    role = profile?.role ?? null
+  }
 
-    if (!profile || profile.role !== 'admin') {
+  // Admin-only routes: check profile role
+  if (user && pathname.startsWith('/admin')) {
+    if (role !== 'admin') {
       return NextResponse.redirect(new URL('/dashboard/profile', request.url))
     }
   }
 
-  // Redirect logged-in users away from auth pages
-  if (user && (pathname === '/login' || pathname === '/register')) {
-    return NextResponse.redirect(new URL('/dashboard/profile', request.url))
+  // Send signed-in users to the correct dashboard from the home and auth pages.
+  if (user && (pathname === '/' || pathname === '/login' || pathname === '/register')) {
+    return NextResponse.redirect(new URL(role === 'admin' ? '/admin' : '/dashboard/profile', request.url))
   }
 
   return supabaseResponse

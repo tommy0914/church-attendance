@@ -20,6 +20,7 @@ Feature availability depends on the current implementation and Supabase configur
 - **QR code support:** QR code generation and browser based QR scanning libraries are included.
 - **Admin area:** Separate admin routes for authorized management workflows.
 - **Dashboard:** A dedicated dashboard route for attendance related information.
+- **Student engagement:** Students can view upcoming services, add calendar reminders, and track attendance against a personal monthly goal.
 - **Supabase integration:** Supabase client libraries for backend data and authentication services.
 - **Offline support:** An offline utility module to support selected offline workflows.
 - **Progressive Web App support:** PWA dependency included for installable web app capabilities.

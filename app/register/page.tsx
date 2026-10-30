@@ -73,7 +73,7 @@ function RegisterForm() {
   if (isSignedUp) {
     return (
       <div className="page-center" style={{ padding: 24 }}>
-        <div className="card fade-in" style={{ width: '100%', maxWidth: 440, textAlign: 'center', padding: '40px 24px' }}>
+        <div className="card fade-in" style={{ width: '100%', maxWidth: 440, textAlign: 'center', padding: 'clamp(20px, 6vw, 40px) 24px' }}>
           <div style={{ fontSize: '4rem', marginBottom: 20 }}>📧</div>
           <h1 style={{ fontSize: '1.8rem', marginBottom: 12 }}>Check your email</h1>
           <p style={{ color: 'var(--text-muted)', marginBottom: 24, lineHeight: 1.6 }}>
