@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
   try {
     const b = await req.json()
     const full_name = str(b.fullName,120)
-    const phone = str(b.phone,30).replace(/[\\s()-]/g,'')
+    const phone = str(b.phone,30).replace(/[\s()-]/g,'')
     const email = str(b.email,160).toLowerCase() || null
     const education_category = str(b.educationCategory,60)
     const institution = str(b.institution,160)
