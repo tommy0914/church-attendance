@@ -4,8 +4,6 @@ import { createClient } from '@/lib/supabase/client'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 
-const ADMIN_CODE = 'CHURCH-ADMIN-2024' // change this secret in production
-
 function RegisterForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -37,8 +35,6 @@ function RegisterForm() {
 
     setLoading(true)
 
-    const isAdmin = form.adminCode === ADMIN_CODE
-
     const supabase = createClient()
     const { data, error: signupError } = await supabase.auth.signUp({
       email: form.email,
@@ -49,7 +45,7 @@ function RegisterForm() {
           phone: form.phone,
           gender: form.gender,
           level: form.level,
-          role: isAdmin ? 'admin' : 'member'
+          role: 'member'
         }
       }
     })
@@ -178,31 +174,6 @@ function RegisterForm() {
                   value={form.confirmPassword} onChange={e => update('confirmPassword', e.target.value)}
                   required minLength={6} autoComplete="new-password" />
               </div>
-            </div>
-
-            {/* Admin code toggle */}
-            <div>
-              <button
-                type="button"
-                onClick={() => setShowAdminCode(!showAdminCode)}
-                style={{
-                  background: 'none', border: 'none', color: 'var(--text-muted)',
-                  fontSize: '0.8rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6
-                }}
-              >
-                🔑 Registering as an admin?
-              </button>
-              {showAdminCode && (
-                <input
-                  id="admin-code"
-                  type="password"
-                  className="form-input"
-                  placeholder="Enter admin invite code"
-                  value={form.adminCode}
-                  onChange={e => update('adminCode', e.target.value)}
-                  style={{ marginTop: 8 }}
-                />
-              )}
             </div>
 
             <button
